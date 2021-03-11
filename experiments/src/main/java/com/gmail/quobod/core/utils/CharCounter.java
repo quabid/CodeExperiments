@@ -45,6 +45,51 @@ public class CharCounter {
         }
     }
 
+    public final void countChars( boolean verbose) {
+        String msg = "";
+
+        if (pathValidator.pathExists(filePath)) {
+            try {
+                RandomAccessFile raf = new RandomAccessFile(filePath, "r");
+                FileChannel fc = raf.getChannel();
+                ByteBuffer bb = ByteBuffer.allocate(512);
+                while (fc.read(bb) > 0) {
+                    bb.flip();
+                    while (bb.hasRemaining()) {
+                        char ch = (char) bb.get();
+                        if (ch != ' ' && ch != '\r' && ch != '\t' && ch != '\n' && !Character.isWhitespace(ch)) {
+                            counter++;
+                        }
+                    }
+                    bb.clear();
+                }
+                raf.close();
+
+                switch (counter) {
+                case 1:
+                    msg = "Counted " + counter + " character";
+                    break;
+
+                default:
+                    msg = "Counted " + counter + " characters";
+                    break;
+                }
+
+                if (verbose) {
+                    println(msg);
+                } else {
+                    println(counter);
+                }
+
+            } catch (IOException ioe) {
+                println(ioe.getMessage());
+            }
+        } else {
+            println("\n\tPath " + filePath + " does not exist!\n");
+            return;
+        }
+    }
+
     public final void countChars(String strFilePath) {
         if (pathValidator.pathExists(strFilePath)) {
             setFilePath(strFilePath);
