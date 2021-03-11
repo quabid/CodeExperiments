@@ -17,7 +17,7 @@ public class CharCounter {
     public CharCounter() {
         super();
     }
-    
+
     public final void countChars() {
         if (pathValidator.pathExists(filePath)) {
             try {
@@ -45,7 +45,7 @@ public class CharCounter {
         }
     }
 
-    public final void countChars( boolean verbose) {
+    public final void countChars(boolean verbose) {
         String msg = "";
 
         if (pathValidator.pathExists(filePath)) {
