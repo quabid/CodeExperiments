@@ -17,12 +17,39 @@ public class CharCounter {
     public CharCounter() {
         super();
     }
+    
+    public final void countChars() {
+        if (pathValidator.pathExists(filePath)) {
+            try {
+                RandomAccessFile raf = new RandomAccessFile(filePath, "r");
+                FileChannel fc = raf.getChannel();
+                ByteBuffer bb = ByteBuffer.allocate(512);
+                while (fc.read(bb) > 0) {
+                    bb.flip();
+                    while (bb.hasRemaining()) {
+                        char ch = (char) bb.get();
+                        if (ch != ' ' && ch != '\r' && ch != '\t' && ch != '\n' && !Character.isWhitespace(ch)) {
+                            counter++;
+                        }
+                    }
+                    bb.clear();
+                }
+                raf.close();
+                println(counter);
+            } catch (IOException ioe) {
+                println(ioe.getMessage());
+            }
+        } else {
+            println("\n\tPath " + filePath + " does not exist!\n");
+            return;
+        }
+    }
 
     public final void countChars(String strFilePath) {
         if (pathValidator.pathExists(strFilePath)) {
             setFilePath(strFilePath);
             try {
-                RandomAccessFile raf = new RandomAccessFile(strFilePath, "r");
+                RandomAccessFile raf = new RandomAccessFile(filePath, "r");
                 FileChannel fc = raf.getChannel();
                 ByteBuffer bb = ByteBuffer.allocate(512);
                 while (fc.read(bb) > 0) {
@@ -52,7 +79,7 @@ public class CharCounter {
         if (pathValidator.pathExists(strFilePath)) {
             setFilePath(strFilePath);
             try {
-                RandomAccessFile raf = new RandomAccessFile(strFilePath, "r");
+                RandomAccessFile raf = new RandomAccessFile(filePath, "r");
                 FileChannel fc = raf.getChannel();
                 ByteBuffer bb = ByteBuffer.allocate(512);
                 while (fc.read(bb) > 0) {
