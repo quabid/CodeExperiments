@@ -1,10 +1,11 @@
 package com.gmail.quobod.core.utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.gmail.quabidlord.pathmanager.core.PathValidator;
 
@@ -20,20 +21,12 @@ public class FileReader {
     public final void readFile(String path) {
         if (pathValidator.pathExists(path)) {
             setFilePath(path);
-            int i = 0;
             try {
-                RandomAccessFile raf = new RandomAccessFile(path, "r");
-                FileChannel fc = raf.getChannel();
-                ByteBuffer bb = ByteBuffer.allocate(512);
-                while (fc.read(bb) > 0) {
-                    bb.flip();
-                    while (bb.hasRemaining()) {
-                        char ch = (char) bb.get();
-                        print(ch);
-                    }
-                    bb.clear();
+                BufferedReader reader = Files.newBufferedReader(Paths.get(path), StandardCharsets.UTF_8);
+                String s = null;
+                while ((s = reader.readLine()) != null) {
+                    print(s);
                 }
-                raf.close();
             } catch (IOException ioe) {
                 print(ioe.getMessage());
             }
@@ -46,18 +39,11 @@ public class FileReader {
     public final void readFile() {
         if (pathValidator.pathExists(filePath)) {
             try {
-                RandomAccessFile raf = new RandomAccessFile(filePath, "r");
-                FileChannel fc = raf.getChannel();
-                ByteBuffer bb = ByteBuffer.allocate(512);
-                while (fc.read(bb) > 0) {
-                    bb.flip();
-                    while (bb.hasRemaining()) {
-                        char ch = (char) bb.get();
-                        print(ch);
-                    }
-                    bb.clear();
+                BufferedReader reader = Files.newBufferedReader(Paths.get(filePath), StandardCharsets.UTF_8);
+                String s = null;
+                while ((s = reader.readLine()) != null) {
+                    print(s);
                 }
-                raf.close();
             } catch (IOException ioe) {
                 print(ioe.getMessage());
             }
@@ -84,7 +70,7 @@ public class FileReader {
         if (args.length == 1) {
             if (pathValidator.pathExists(args[0])) {
                 FileReader fr = new FileReader();
-                fr.readFile("/home/quobod/bin/tooct");
+                fr.readFile(args[0]);
             } else {
                 println("\n\tPath " + args[0] + " does not exist!\n");
             }
