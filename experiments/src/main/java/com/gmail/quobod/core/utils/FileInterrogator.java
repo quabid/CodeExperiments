@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.UserPrincipal;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 
 import com.gmail.quabidlord.pathmanager.core.PathValidator;
 
@@ -54,11 +56,12 @@ public class FileInterrogator {
             boolean isSymbolicLink = Files.isSymbolicLink(path);
             boolean isWritable = Files.isWritable(path);
             long size = Files.size(path);
+            String fileSize = humanReadableByteCountBin(size);
 
             println("Attributes: " + attr);
             println("Last Modified: " + lastMod);
             println("Owner: " + owner.getName());
-            println("Size: " + size);
+            println("Size: " + fileSize);
             println("Directory? " + isDirectory);
             println("Executable? " + isExecutable);
             println("Hidden? " + isHidden);
@@ -85,7 +88,32 @@ public class FileInterrogator {
         printer.println(String.valueOf(obj));
     }
 
+    private static String humanReadableByteCountBin(long bytes) {
+        long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
+        if (absB < 1024) {
+            return bytes + " B";
+        }
+        long value = absB;
+        CharacterIterator ci = new StringCharacterIterator("KMGTPE");
+        for (int i = 40; i >= 0 && absB > 0xfffccccccccccccL >> i; i -= 10) {
+            value >>= 10;
+            ci.next();
+        }
+        value *= Long.signum(bytes);
+        return String.format("%.1f %ciB", value / 1024.0, ci.current()).trim();
+    }
+
     public static void main(String[] args) {
+        FileInterrogator interrogator = new FileInterrogator();
+        interrogator.setFilePath("/home/quabid/bin/c");
+        try {
+            interrogator.interrogateFile();
+        } catch (IOException ioe) {
+            System.out.println(ioe.getMessage());
+        }
+    }
+
+    public static void main_(String[] args) {
         if (args.length == 1) {
             if (pathValidator.pathExists(args[0])) {
                 FileInterrogator interrogator = new FileInterrogator();
