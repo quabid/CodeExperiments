@@ -104,16 +104,6 @@ public class FileInterrogator {
     }
 
     public static void main(String[] args) {
-        FileInterrogator interrogator = new FileInterrogator();
-        interrogator.setFilePath("/home/quabid/bin/c");
-        try {
-            interrogator.interrogateFile();
-        } catch (IOException ioe) {
-            System.out.println(ioe.getMessage());
-        }
-    }
-
-    public static void main_(String[] args) {
         if (args.length == 1) {
             if (pathValidator.pathExists(args[0])) {
                 FileInterrogator interrogator = new FileInterrogator();
